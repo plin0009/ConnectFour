@@ -4,7 +4,7 @@ import {StyleSheet, View, Text, Button, TouchableWithoutFeedback} from 'react-na
 import Board from './Board';
 
 export default MatchScreen = () => {
-	const [board, setBoard] = useState([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]);
+	const [board, setBoard] = useState([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
 	const [gameState, setGameState] = useState('active');
 	const [turn, setTurn] = useState(1);
 	const [moves, setMoves] = useState([]);
@@ -57,8 +57,7 @@ export default MatchScreen = () => {
           currentPos[0] -= direction[0];  // reverse
           currentPos[1] -= direction[1];
           // check if out of bounds (todo: replace 7 with constant)
-          if (currentPos[0] < 0 || currentPos[0] >= 7) break;
-          if (currentPos[1] < 0 || currentPos[1] >= 7) break;
+          if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 6) break;
           // if the chain stops
           if (board[currentPos[0]][currentPos[1]] !== color) break;
           reverseCount++;
@@ -68,7 +67,7 @@ export default MatchScreen = () => {
           currentPos[0] += direction[0];  // forward
           currentPos[1] += direction[1];
           // check if out of bounds (todo: replace 7 with constant)
-          if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 7) break;
+          if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 6) break;
           // if the chain stops
           if (board[currentPos[0]][currentPos[1]] !== color) break;
           forwardCount++;
@@ -86,7 +85,7 @@ export default MatchScreen = () => {
 	}
 
 	const resetBoard = () => {
-		setBoard([[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]);
+		setBoard([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
 		setTurn(1);
 		setMoves([]);
 		setGameState('active');
@@ -154,7 +153,7 @@ export default MatchScreen = () => {
 			<Board board={board} makeMove={column => makeMove(column, turn)}/>
 			<View style={styles.buttonContainer}>
 				<Button style={styles.button} title="Reset Board" onPress={() => resetBoard()}></Button>
-			<Button style={styles.button} title="Undo Move" onPress={() => undoMove()}></Button>
+				<Button style={styles.button} title="Undo Move" onPress={() => undoMove()}></Button>
 			</View>
 		</View>
 	);
