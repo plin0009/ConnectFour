@@ -3,6 +3,46 @@ import {StyleSheet, View, Text, Button} from 'react-native';
 
 import Board from './Board';
 
+const styles = StyleSheet.create({
+	parent: {
+		alignItems: 'center'
+	},
+	text: {
+		fontSize: 30,
+		margin: 10
+	},
+	red: {
+		color: 'red'
+	},
+	yellow: {
+		color: '#eedd00'
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+		marginVertical: 15,
+		alignItems: 'stretch'
+	},
+	button: {
+		fontSize: 50,
+		justifyContent: 'space-between',
+	},
+	board: {
+		flexDirection: 'row',
+		backgroundColor: '#0d0d66',
+		padding: 10
+	},
+	column: { flexDirection: 'column' },
+	slot: {
+		margin: 4,
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+	},
+	slot0: { backgroundColor: '#3333cc'		},
+	slot1: { backgroundColor: 'red'				},
+	slot2: { backgroundColor: '#eedd00'		}
+});
+
 export default MatchScreen = ({toMenu}) => {
 	const [board, setBoard] = useState([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
 	const [gameState, setGameState] = useState('active');
@@ -99,54 +139,13 @@ export default MatchScreen = ({toMenu}) => {
 					board[lastMove[0]][lastMove[1]] = 0;
 					return board;
 				});
-				switchTurns();
+				gameState === 'active' && switchTurns();
 				setGameState('active');
 			}
 			return moves;
 		})
 
 	}
-	
-	const styles = StyleSheet.create({
-		parent: {
-			alignItems: 'center'
-		},
-		text: {
-			fontSize: 30,
-			margin: 10
-		},
-		red: {
-			color: 'red'
-		},
-		yellow: {
-			color: '#eedd00'
-		},
-		buttonContainer: {
-			flexDirection: 'row',
-			marginVertical: 15,
-			alignItems: 'stretch'
-		},
-		button: {
-			fontSize: 50,
-			justifyContent: 'space-between',
-		},
-		board: {
-			flexDirection: 'row',
-			backgroundColor: '#0d0d66',
-			padding: 10
-		},
-		column: { flexDirection: 'column' },
-		slot: {
-			margin: 4,
-			width: 40,
-			height: 40,
-			borderRadius: 20,
-		},
-		slot0: { backgroundColor: '#3333cc'		},
-		slot1: { backgroundColor: 'red'				},
-		slot2: { backgroundColor: '#eedd00'		}
-	});
-
 	return (
 		<View style={styles.parent}>
 			<Text style={[styles.text, styles[turn === 1 ? 'red' : 'yellow']]}>{gameState === 'active' ? `${turn === 1 ? 'Red' : 'Yellow'} to move` : 'Game over'}</Text>
