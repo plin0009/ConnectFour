@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Button} from 'react-native';
+import Btn from './Btn';
 
 import Board from './Board';
 
@@ -9,7 +10,8 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 30,
-		margin: 10
+		margin: 10,
+		fontFamily: 'Nunito-Regular',
 	},
 	red: {
 		color: 'red'
@@ -151,10 +153,10 @@ export default MatchScreen = ({toMenu}) => {
 			<Text style={[styles.text, styles[turn === 1 ? 'red' : 'yellow']]}>{gameState === 'active' ? `${turn === 1 ? 'Red' : 'Yellow'} to move` : 'Game over'}</Text>
 			<Board board={board} makeMove={column => makeMove(column, turn)}/>
 			<View style={styles.buttonContainer}>
-				<Button style={styles.button} title="Reset Board" onPress={() => resetBoard()}/>
-				<Button style={styles.button} title="Undo Move" onPress={() => undoMove()}/>
-				<Button title="Back to menu" onPress={toMenu}/>
+				<Btn backgroundColor="primary" title="Reset Board" onPress={() => resetBoard()}/>
+				<Btn backgroundColor="secondary" title="Undo Move" onPress={() => undoMove()}/>
 			</View>
+			<Btn title="Back to menu" onPress={toMenu}/>
 		</View>
 	);
 }
