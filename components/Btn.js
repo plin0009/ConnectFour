@@ -1,6 +1,6 @@
 import React from 'react';
-
 import {StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import globalStyles from './globalStyles';
 
 const styles = StyleSheet.create({
     button: {
@@ -14,14 +14,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#999999',
     },
     primary: {
-        backgroundColor: '#ffcc00',
+        backgroundColor: globalStyles.colors.yellow,
     },
     secondary: {
         backgroundColor: '#ddbb77',
     },
     text: {
-        fontFamily: "Nunito-Regular",
-        fontSize: 20,
+        fontFamily: globalStyles.font.primary,
+        fontSize: globalStyles.font.medium,
     },
 });
 

@@ -9,8 +9,9 @@ import {StyleSheet, View, Text, TouchableWithoutFeedback} from 'react-native';
 const styles = StyleSheet.create({
   board: {
     flexDirection: 'row',
-    backgroundColor: '#0d0d66',
-    padding: 10
+    backgroundColor: '#2d2d99',
+    padding: 10,
+    marginVertical: 10,
   },
   column: {
     flexDirection: 'column'
@@ -22,13 +23,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   slot0: {
-    backgroundColor: '#3333cc',
+    backgroundColor: '#4f4fdd',
   },
   slot1: {
-    backgroundColor: 'red'
+    backgroundColor: '#de1616'
   },
   slot2: {
-    backgroundColor: '#eedd00'
+    backgroundColor: '#eecc22'
   }
 });
 const Board = ({board, makeMove}) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import Btn from './Btn';
+import globalStyles from './globalStyles';
 
 const styles = StyleSheet.create({
     view: {
@@ -8,9 +9,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     title: {
-        color: '#dd0000',
+        color: globalStyles.colors.red,
         fontSize: 40,
-        fontFamily: 'Anton-Regular',
+        fontFamily: globalStyles.font.secondary,
     },
 });
 
