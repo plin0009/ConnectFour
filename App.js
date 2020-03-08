@@ -19,15 +19,16 @@ const styles = StyleSheet.create({
 });
 const App = () => {
   const [screen, setScreen] = useState('menu');
-  const [theme, setTheme] = useState('grayscale');
-  const [lights, setLights] = useState(false);
+  const themeState = useState('default');
+  const [lights, setLights] = useState(true);
+  const playersState = useState(['local', 'local']);
 
   const toggleLights = () => setLights(lights => !lights);
 
   return (
     <View style={{...styles.view, backgroundColor: globalStyles.lights[lights]}}>
-      {screen === 'menu' && <MenuScreen themeState={[theme, setTheme]} lightsState={[lights, toggleLights]} toMatch={() => setScreen('match')}/>}
-      {screen === 'match' && <MatchScreen themeState={[theme, setTheme]} lightsState={[lights, toggleLights]} toMenu={() => setScreen('menu')}/>}
+      {screen === 'menu' && <MenuScreen themeState={themeState} lightsState={[lights, toggleLights]} playersState={playersState} toMatch={() => setScreen('match')}/>}
+      {screen === 'match' && <MatchScreen themeState={themeState} lightsState={[lights, toggleLights]} playersState={playersState} toMenu={() => setScreen('menu')}/>}
     </View>
   );
 };

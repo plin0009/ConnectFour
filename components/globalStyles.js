@@ -2,7 +2,7 @@ export default {
 	themes: {
 		default: {
 			boardBackground: '#2d2d99',
-			accent: '#4f4fdd',
+			accent: '#5f5fee',
 			board: [
 				'#4f4fdd',
 				'#de1616',
@@ -11,7 +11,7 @@ export default {
 		},
 		orange: {
 			boardBackground: '#aa3400',
-			accent: '#cc3d00',
+			accent: '#dd5d00',
 			board: [
 				'#cc3d00',
 				'#16ceff',
@@ -19,10 +19,10 @@ export default {
 			],
 		},
 		grayscale: {
-			boardBackground: '#434343',
-			accent: '#666666',
+			boardBackground: '#535353',
+			accent: '#777777',
 			board: [
-				'#4b4b4b',
+				'#5b5b5b',
 				'#efefef',
 				'#121212',
 			],

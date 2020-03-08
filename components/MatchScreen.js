@@ -3,7 +3,7 @@ import {Alert, StyleSheet, View, Text, Button, TouchableOpacity} from 'react-nat
 import {TextBtn, Btn} from './Btn';
 import Board from './Board';
 
-import {BackSVG, EyeSVG, UndoSVG, ResetSVG, MoonSVG, CircleSVG} from './SVGs';
+import {BackSVG, EyeSVG, UndoSVG, ResetSVG, MoonSVG, CircleSVG, HumanSVG, BotSVG} from './SVGs';
 
 import globalStyles from './globalStyles';
 
@@ -32,30 +32,15 @@ const styles = StyleSheet.create({
 	playerContainer: {
 		flexDirection: 'row',
 		alignSelf: 'stretch',
-		justifyContent: 'space-between',
-		marginVertical: 15
+		justifyContent: 'space-evenly',
+		alignItems: 'center',
+		marginHorizontal: 20,
+		marginVertical: 15,
 	},
 	player: {
-		opacity: 0.7,
-		padding: 10,
-		borderRadius: 100,
-		borderWidth: 3,
-		borderColor: '#00000000',
-		width: 150,
-	},
-	playerTurn: {
-		opacity: 1,
-		borderColor: '#ffffffff',
-	},
-	playerName: {
-		textAlign: 'center',
-		fontSize: 20,
-		fontFamily: globalStyles.font.primary,
-	},
-	playerWins: {
-		textAlign: 'center',
-		fontSize: 14,
-		fontFamily: globalStyles.font.secondary,
+		width: 64,
+		height: 64,
+		borderRadius: 6.4,
 	},
 	SVG: {
 		width: 32,
@@ -73,7 +58,7 @@ const styles = StyleSheet.create({
 	}, */
 });
 
-export default MatchScreen = ({toMenu, themeState, lightsState}) => {
+export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) => {
 	const [theme, setTheme] = themeState;
 	const [lights, toggleLights] = lightsState;
 
@@ -83,11 +68,7 @@ export default MatchScreen = ({toMenu, themeState, lightsState}) => {
 	const [board, setBoard] = useState([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
 	const [gameState, setGameState] = useState('active');
 	const [moves, setMoves] = useState([]);
-	const [players, setPlayers] = useState([{name: 'Player 1', wins: 0},{name: 'Player 2', wins: 0}]);
-
-	useEffect(() => {
-		checkGameState();
-	}, [moves]);
+    const [players, setPlayers] = playersState;
 	
 	const makeMove = (column) => {
 		if (gameState !== 'active') {
@@ -97,58 +78,59 @@ export default MatchScreen = ({toMenu, themeState, lightsState}) => {
 			if (!board[column][i]) {
 				setBoard(prevBoard => {
 					prevBoard[column][i] = moves.length % 2 + 1;
-					return [...prevBoard];
+					const newBoard = [...prevBoard];
+					setMoves([...moves, [column, i]]);
+					checkGameState(newBoard, [column, i]);
+					return newBoard;
 				});
-				setMoves([...moves, [column, i]]);	// useEffect hook checks game state after every move change
 				return;
 			}
 		}
 		// invalid move
 	}
 
-	const checkGameState = () => {
+	const checkGameState = (newBoard, lastMove) => {
 		if (moves.length && gameState === 'active') {
-			const evaluation = evaluateBoard();
-			if (evaluation) {
+			const evaluation = evaluateBoard(newBoard, lastMove);
+			if (evaluation !== 0) {
 				setGameState('win');
 				return;
 			}
-			return;
 		}
 	}
 
-	const evaluateBoard = () => {
+	const evaluateBoard = (newBoard, lastMove) => {
 		// use last move
 		if (moves.length) {
-		const lastMove = moves[moves.length - 1];
-		const color = board[lastMove[0]][lastMove[1]];
+		//const lastMove = moves[moves.length - 1];
+		const color = newBoard[lastMove[0]][lastMove[1]];
 		for (let direction of [[0,1],[1,0],[1,1],[1,-1]]) {
 			let reverseCount = 0;
 			let forwardCount = 0;
 			let currentPos = [...lastMove];
 			while (true) {
-			currentPos[0] -= direction[0];  // reverse
-			currentPos[1] -= direction[1];
-			// check if out of bounds (todo: replace 7 with constant)
-			if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 6) break;
-			// if the chain stops
-			if (board[currentPos[0]][currentPos[1]] !== color) break;
-			reverseCount++;
+				currentPos[0] -= direction[0];  // reverse
+				currentPos[1] -= direction[1];
+				// check if out of bounds (todo: replace 7 with constant)
+				if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 6) break;
+				// if the chain stops
+				if (newBoard[currentPos[0]][currentPos[1]] !== color) break;
+				reverseCount++;
 			}
 			currentPos = [...lastMove];
 			while (true) {
-			currentPos[0] += direction[0];  // forward
-			currentPos[1] += direction[1];
-			// check if out of bounds (todo: replace 7 with constant)
-			if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 6) break;
-			// if the chain stops
-			if (board[currentPos[0]][currentPos[1]] !== color) break;
-			forwardCount++;
+				currentPos[0] += direction[0];  // forward
+				currentPos[1] += direction[1];
+				// check if out of bounds (todo: replace 7 with constant)
+				if (currentPos[0] < 0 || currentPos[0] >= 7 || currentPos[1] < 0 || currentPos[1] >= 6) break;
+				// if the chain stops
+				if (newBoard[currentPos[0]][currentPos[1]] !== color) break;
+					forwardCount++;
+				}
+				if (reverseCount + 1 + forwardCount >= 4) {
+					return color; // win
+				}
 			}
-			if (reverseCount + 1 + forwardCount >= 4) {
-			return color; // win
-			}
-		}
 		}
 		return 0;
 	}
@@ -236,16 +218,10 @@ export default MatchScreen = ({toMenu, themeState, lightsState}) => {
 					<EyeSVG style={styles.SVG} selected={showSettings} fill={globalStyles.themes[theme].accent}/>
 				</Btn>
 			</View>
-			{/* <View style={styles.playerContainer}>
-				<View style={[styles.player, styles.red, (moves.length % 2 === 0 && gameState === 'active') ? styles.playerTurn : undefined]}>
-					<Text style={styles.playerName}>{players[0].name}</Text>
-					<Text style={styles.playerWins}>Wins: {players[0].wins}</Text>
-				</View>
-				<View style={[styles.player, styles.yellow, (moves.length % 2 === 1 && gameState === 'active') ? styles.playerTurn : undefined]}>
-					<Text style={styles.playerName}>{players[1].name}</Text>
-					<Text style={styles.playerWins}>Wins: {players[1].wins}</Text>
-				</View>
-			</View> */}
+			<View style={styles.playerContainer}>
+				<Player type={players[0]} size={(gameState === 'active' && moves.length % 2 === 1) ? 48 : 64} backgroundColor={globalStyles.themes[theme].boardBackground} color={globalStyles.themes[theme].board[1]}/>
+				<Player type={players[1]} size={(gameState === 'active' && moves.length % 2 === 0) ? 48 : 64} backgroundColor={globalStyles.themes[theme].boardBackground} color={globalStyles.themes[theme].board[2]}/>
+			</View>
 			<Board board={board} makeMove={makeMove} theme={theme}/>
 			<View style={styles.buttonContainer}>
 				<Btn onPress={confirmUndoMove} disabled={moves.length === 0}>
