@@ -1,32 +1,34 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text, Button} from 'react-native';
-import Btn from './Btn';
+import {Alert, StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
+import {TextBtn, Btn} from './Btn';
 import Board from './Board';
+
+import {BackSVG, EyeSVG, UndoSVG, ResetSVG, MoonSVG, CircleSVG} from './SVGs';
 
 import globalStyles from './globalStyles';
 
 const styles = StyleSheet.create({
 	parent: {
-		alignItems: 'center'
+		alignItems: 'center',
+		alignSelf: 'stretch',
+	},
+	topBar: {
+		flexDirection: 'row',
+		alignSelf: 'stretch',
+		justifyContent: 'space-between',
+		margin: 20,
 	},
 	text: {
 		fontSize: globalStyles.font.big,
 		fontFamily: globalStyles.font.primary,
 		margin: 10,
 	},
-	red: {
-		color: 'red'
-	},
-	yellow: {
-		color: '#eedd00'
-	},
 	buttonContainer: {
 		flexDirection: 'row',
 		marginVertical: 15,
-		alignItems: 'stretch'
+		alignSelf: 'stretch',
+		justifyContent: 'space-evenly',
 	},
-	red: { backgroundColor: globalStyles.colors.red				},
-	yellow: { backgroundColor: globalStyles.colors.yellow		},
 	playerContainer: {
 		flexDirection: 'row',
 		alignSelf: 'stretch',
@@ -35,7 +37,6 @@ const styles = StyleSheet.create({
 	},
 	player: {
 		opacity: 0.7,
-		backgroundColor: globalStyles.colors.darkBlue,
 		padding: 10,
 		borderRadius: 100,
 		borderWidth: 3,
@@ -49,19 +50,38 @@ const styles = StyleSheet.create({
 	playerName: {
 		textAlign: 'center',
 		fontSize: 20,
-		fontFamily: 'Nunito-Regular',
+		fontFamily: globalStyles.font.primary,
 	},
 	playerWins: {
 		textAlign: 'center',
 		fontSize: 14,
-		fontFamily: 'Nunito-Regular',
+		fontFamily: globalStyles.font.secondary,
 	},
+	SVG: {
+		width: 32,
+		height: 32,
+		margin: 8,
+	},
+	bigButtonSVG: {
+		width: 50,
+		height: 50,
+	},/* 
+	selectedTheme: {
+		width: 40,
+		height: 40,
+		margin: 4
+	}, */
 });
 
-export default MatchScreen = ({toMenu}) => {
+export default MatchScreen = ({toMenu, themeState, lightsState}) => {
+	const [theme, setTheme] = themeState;
+	const [lights, toggleLights] = lightsState;
+
+	const [showSettings, setShowSettings] = useState(false);
+	const toggleShowSettings = () => setShowSettings(showSettings => !showSettings);
+
 	const [board, setBoard] = useState([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
 	const [gameState, setGameState] = useState('active');
-	const [turn, setTurn] = useState(1);
 	const [moves, setMoves] = useState([]);
 	const [players, setPlayers] = useState([{name: 'Player 1', wins: 0},{name: 'Player 2', wins: 0}]);
 
@@ -69,18 +89,17 @@ export default MatchScreen = ({toMenu}) => {
 		checkGameState();
 	}, [moves]);
 	
-	const makeMove = (column, turn) => {
+	const makeMove = (column) => {
 		if (gameState !== 'active') {
 			return;	// game is not in progress (paused, finished, etc.)
 		}
 		for (let i = board[column].length - 1; i >= 0; i--) {
 			if (!board[column][i]) {
 				setBoard(prevBoard => {
-					prevBoard[column][i] = turn;
-					return prevBoard;
+					prevBoard[column][i] = moves.length % 2 + 1;
+					return [...prevBoard];
 				});
-				setMoves([...moves, [column, i]]);
-				//checkGameState();
+				setMoves([...moves, [column, i]]);	// useEffect hook checks game state after every move change
 				return;
 			}
 		}
@@ -94,7 +113,6 @@ export default MatchScreen = ({toMenu}) => {
 				setGameState('win');
 				return;
 			}
-			if (moves.length % 2 + 1 !== turn)	switchTurns();
 			return;
 		}
 	}
@@ -134,51 +152,108 @@ export default MatchScreen = ({toMenu}) => {
 		}
 		return 0;
 	}
-	
-	const switchTurns = () => {
-		setTurn(turn => turn === 1 ? 2 : 1);
-	}
 
 	const resetBoard = () => {
 		setBoard([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
-		setTurn(1);
+		// setTurn(1);
 		setMoves([]);
 		setGameState('active');
 	}
 	
 	const undoMove = () => {
 		setMoves(moves => {
-			if (moves.length) {
+			if (moves.length > 0) {
 				const lastMove = moves.pop();
-				setBoard(board => {
-					board[lastMove[0]][lastMove[1]] = 0;
-					return board;
+				setBoard(prevBoard => {
+					prevBoard[lastMove[0]][lastMove[1]] = 0;
+					return [...prevBoard];
 				});
-				gameState === 'active' && switchTurns();
+				//gameState === 'active' && switchTurns();
 				setGameState('active');
 			}
 			return moves;
 		})
 
 	}
+
+	const choiceAlert = ({title, message, ok}) => {
+		Alert.alert(
+			title, message, [
+				{
+					text: 'Cancel',
+					style: 'cancel'
+				},
+				{
+					onPress: ok
+				}
+			]
+		)
+	}
+
+	const okAlert = ({title, message}) => {
+		Alert.alert(title, message)
+	}
+	const confirmUndoMove = () => {
+		if (moves.length) {
+			return choiceAlert({
+				title: 'Undo move',
+				message: 'Take back a move?',
+				ok: undoMove
+			});
+		}
+		return okAlert({title: 'Uh oh', message: 'No moves to take back'})
+	}
+	const confirmResetBoard = () => {
+		if (moves.length) {
+			return choiceAlert({
+				title: 'Reset board',
+				message: 'Start over?',
+				ok: resetBoard
+			});
+		}
+	}
 	return (
 		<View style={styles.parent}>
-			<Btn title="Back to menu" onPress={toMenu}/>
-			<View style={styles.playerContainer}>
-				<View style={[styles.player, styles.red, (turn === 1 && gameState === 'active') ? styles.playerTurn : undefined]}>
+			<View style={styles.topBar}>
+				<Btn onPress={toMenu}>
+					<BackSVG style={styles.SVG} fill={globalStyles.themes[theme].accent}/>
+				</Btn>
+				{showSettings ? <>
+				<Btn onPress={() => setTheme('default')}>
+					<CircleSVG style={styles.SVG} selected={theme === 'default'} fill={globalStyles.themes.default.accent}/>
+				</Btn>
+				<Btn onPress={() => setTheme('orange')}>
+					<CircleSVG style={styles.SVG} selected={theme === 'orange'} fill={globalStyles.themes.orange.accent}/>
+				</Btn>
+				<Btn onPress={() => setTheme('grayscale')}>
+					<CircleSVG style={styles.SVG} selected={theme === 'grayscale'} fill={globalStyles.themes.grayscale.accent}/>
+				</Btn>
+				<Btn onPress={toggleLights}>
+					<MoonSVG style={styles.SVG} fill={globalStyles.lights[!lights]}/>
+				</Btn>
+				</> : null}
+				<Btn onPress={toggleShowSettings}>
+					<EyeSVG style={styles.SVG} selected={showSettings} fill={globalStyles.themes[theme].accent}/>
+				</Btn>
+			</View>
+			{/* <View style={styles.playerContainer}>
+				<View style={[styles.player, styles.red, (moves.length % 2 === 0 && gameState === 'active') ? styles.playerTurn : undefined]}>
 					<Text style={styles.playerName}>{players[0].name}</Text>
 					<Text style={styles.playerWins}>Wins: {players[0].wins}</Text>
 				</View>
-				<View style={[styles.player, styles.yellow, (turn === 2 && gameState === 'active') ? styles.playerTurn : undefined]}>
+				<View style={[styles.player, styles.yellow, (moves.length % 2 === 1 && gameState === 'active') ? styles.playerTurn : undefined]}>
 					<Text style={styles.playerName}>{players[1].name}</Text>
 					<Text style={styles.playerWins}>Wins: {players[1].wins}</Text>
 				</View>
-			</View>
-			{/* <Text style={[styles.text, styles[turn === 1 ? 'red' : 'yellow']]}>{gameState === 'active' ? `${turn === 1 ? 'Red' : 'Yellow'} to move` : 'Game over'}</Text> */}
-			<Board board={board} makeMove={column => makeMove(column, turn)}/>
+			</View> */}
+			<Board board={board} makeMove={makeMove} theme={theme}/>
 			<View style={styles.buttonContainer}>
-				<Btn backgroundColor="primary" title="Reset Board" onPress={() => resetBoard()}/>
-				<Btn backgroundColor="secondary" title="Undo Move" onPress={() => undoMove()}/>
+				<Btn onPress={confirmUndoMove} disabled={moves.length === 0}>
+					<UndoSVG style={[styles.SVG, styles.bigButtonSVG]} fill={globalStyles.themes[theme].accent}/>
+				</Btn>
+				<Btn onPress={confirmResetBoard} disabled={moves.length === 0}>
+					<ResetSVG style={[styles.SVG, styles.bigButtonSVG]} fill={globalStyles.themes[theme].accent}/>
+				</Btn>
 			</View>
 		</View>
 	);

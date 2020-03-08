@@ -7,17 +7,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 5,
         alignItems: 'center',
-        backgroundColor: '#cccccc',
         margin: 5,
-    },
-    default: {
-        backgroundColor: '#999999',
-    },
-    primary: {
-        backgroundColor: globalStyles.colors.yellow,
-    },
-    secondary: {
-        backgroundColor: '#ddbb77',
     },
     text: {
         fontFamily: globalStyles.font.primary,
@@ -25,7 +15,12 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Btn = ({title, backgroundColor="default", textStyles = [], onPress}) => 
-    <TouchableOpacity activeOpacity={0.6} onPress={onPress} style={[styles.button, styles[backgroundColor]]}>
-        <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+export const TextBtn = ({title, backgroundColor="#ffffff", textStyles = [], onPress}) => 
+	<TouchableOpacity activeOpacity={0.6} onPress={onPress} style={{...styles.button, backgroundColor: backgroundColor}}>
+		<Text style={styles.text}>{title}</Text>
+	</TouchableOpacity>
+
+export const Btn = ({children, onPress, disabled}) => 
+	<TouchableOpacity style={disabled ? {opacity: 0.2} : {}} disabled={disabled} activeOpacity={0.6} onPress={onPress}>
+		{children}
+	</TouchableOpacity>

@@ -8,21 +8,26 @@ import {StyleSheet, View} from 'react-native';
 import MenuScreen from './components/MenuScreen';
 import MatchScreen from './components/MatchScreen';
 
+import globalStyles from './components/globalStyles';
+
 const styles = StyleSheet.create({
   view: {
     flex: 1,
-    justifyContent: 'center',
+    padding: 10,
     alignItems: 'center',
-    backgroundColor: '#121212',
-    fontFamily: 'Nunito'
   },
 });
 const App = () => {
   const [screen, setScreen] = useState('menu');
+  const [theme, setTheme] = useState('grayscale');
+  const [lights, setLights] = useState(false);
+
+  const toggleLights = () => setLights(lights => !lights);
+
   return (
-    <View style={styles.view}>
-      {screen === 'menu' && <MenuScreen toMatch={() => setScreen('match')}/>}
-      {screen === 'match' && <MatchScreen toMenu={() => setScreen('menu')}/>}
+    <View style={{...styles.view, backgroundColor: globalStyles.lights[lights]}}>
+      {screen === 'menu' && <MenuScreen themeState={[theme, setTheme]} lightsState={[lights, toggleLights]} toMatch={() => setScreen('match')}/>}
+      {screen === 'match' && <MatchScreen themeState={[theme, setTheme]} lightsState={[lights, toggleLights]} toMenu={() => setScreen('menu')}/>}
     </View>
   );
 };

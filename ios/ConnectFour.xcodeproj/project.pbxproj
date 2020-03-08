@@ -18,6 +18,8 @@
 		2DCD954D1E0B4F2C00145EB5 /* ConnectFourTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ConnectFourTests.m */; };
 		AA9E0ADF39BA4F748E3A4853 /* Anton-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1B18262130894BD686B23DBB /* Anton-Regular.ttf */; };
 		B58322BDC85A405794AF3A37 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E457E0880BB4FD081850F4E /* Nunito-Regular.ttf */; };
+		92904478F56E4929921CF80C /* Spartan-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EE2C705A8B7C4B88973B0CBD /* Spartan-Bold.ttf */; };
+		5B0BB222D8694DDEADA8862D /* Spartan-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1664DC02B6F841EEB51403EA /* Spartan-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		1B18262130894BD686B23DBB /* Anton-Regular.ttf */ = {isa = PBXFileReference; name = "Anton-Regular.ttf"; path = "../assets/fonts/Anton-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		8E457E0880BB4FD081850F4E /* Nunito-Regular.ttf */ = {isa = PBXFileReference; name = "Nunito-Regular.ttf"; path = "../assets/fonts/Nunito-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EE2C705A8B7C4B88973B0CBD /* Spartan-Bold.ttf */ = {isa = PBXFileReference; name = "Spartan-Bold.ttf"; path = "../assets/fonts/Spartan-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1664DC02B6F841EEB51403EA /* Spartan-Regular.ttf */ = {isa = PBXFileReference; name = "Spartan-Regular.ttf"; path = "../assets/fonts/Spartan-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +171,8 @@
 			children = (
 				1B18262130894BD686B23DBB /* Anton-Regular.ttf */,
 				8E457E0880BB4FD081850F4E /* Nunito-Regular.ttf */,
+				EE2C705A8B7C4B88973B0CBD /* Spartan-Bold.ttf */,
+				1664DC02B6F841EEB51403EA /* Spartan-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -310,6 +316,8 @@
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				AA9E0ADF39BA4F748E3A4853 /* Anton-Regular.ttf in Resources */,
 				B58322BDC85A405794AF3A37 /* Nunito-Regular.ttf in Resources */,
+				92904478F56E4929921CF80C /* Spartan-Bold.ttf in Resources */,
+				5B0BB222D8694DDEADA8862D /* Spartan-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
