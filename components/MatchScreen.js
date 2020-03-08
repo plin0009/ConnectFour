@@ -50,12 +50,7 @@ const styles = StyleSheet.create({
 	bigButtonSVG: {
 		width: 50,
 		height: 50,
-	},/* 
-	selectedTheme: {
-		width: 40,
-		height: 40,
-		margin: 4
-	}, */
+	},
 });
 
 export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) => {
@@ -68,6 +63,7 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 	const [board, setBoard] = useState([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
 	const [gameState, setGameState] = useState('active');
 	const [moves, setMoves] = useState([]);
+	const [undidMove, setUndidMove] = useState([]);
     const [players, setPlayers] = playersState;
 	
 	const makeMove = (column) => {
@@ -137,8 +133,8 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 
 	const resetBoard = () => {
 		setBoard([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
-		// setTurn(1);
 		setMoves([]);
+		setUndidMove(undidMove => undidMove === 'all' ? 'everything' : 'all');	// a different value to trigger useEffect, which clears the board when reset
 		setGameState('active');
 	}
 	
@@ -152,6 +148,7 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 				});
 				//gameState === 'active' && switchTurns();
 				setGameState('active');
+				setUndidMove(lastMove);
 			}
 			return moves;
 		})
@@ -222,7 +219,7 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 				<Player type={players[0]} size={(gameState === 'active' && moves.length % 2 === 1) ? 48 : 64} backgroundColor={globalStyles.themes[theme].boardBackground} color={globalStyles.themes[theme].board[1]}/>
 				<Player type={players[1]} size={(gameState === 'active' && moves.length % 2 === 0) ? 48 : 64} backgroundColor={globalStyles.themes[theme].boardBackground} color={globalStyles.themes[theme].board[2]}/>
 			</View>
-			<Board board={board} makeMove={makeMove} theme={theme}/>
+			<Board board={board} makeMove={makeMove} lastMove={moves.length > 0 ? moves[moves.length - 1] : []} undidMove={undidMove} theme={theme} gameState={gameState}/>
 			<View style={styles.buttonContainer}>
 				<Btn onPress={confirmUndoMove} disabled={moves.length === 0}>
 					<UndoSVG style={[styles.SVG, styles.bigButtonSVG]} fill={globalStyles.themes[theme].accent}/>
