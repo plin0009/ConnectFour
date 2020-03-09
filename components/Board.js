@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 });
-const Board = ({board, lastMove, makeMove, theme, undidMove, gameState}) => {
+const Board = ({board, lastMove, makeMove, theme, undidMove, playerCanMove}) => {
   const [positions] = useState(Array(7).fill().map(col => Array(6).fill().map(() => new Animated.Value(0))));
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const Board = ({board, lastMove, makeMove, theme, undidMove, gameState}) => {
         </View>
         <BoardSVG style={styles.boardSVG} fill={globalStyles.themes[theme].boardBackground}/>
         {board.map((column, columnIndex) => 
-          <TouchableWithoutFeedback key={columnIndex} onPress={() => makeMove(columnIndex)} disabled={column[0] !== 0 || gameState !== 'active'}>
+          <TouchableWithoutFeedback key={columnIndex} onPress={() => makeMove(columnIndex)} disabled={column[0] !== 0 || !playerCanMove}>
             <View style={{...styles.column, transform: [{translateX: columnIndex * 48 + 10}, {translateY: 10}]}}/>
           </TouchableWithoutFeedback>
         )}

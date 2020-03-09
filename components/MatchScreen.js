@@ -7,6 +7,8 @@ import {BackSVG, EyeSVG, UndoSVG, ResetSVG, MoonSVG, CircleSVG, HumanSVG, BotSVG
 
 import globalStyles from './globalStyles';
 
+import Bot from '../bot/Bots';
+
 const styles = StyleSheet.create({
 	parent: {
 		alignItems: 'center',
@@ -64,11 +66,27 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 	const [gameState, setGameState] = useState('active');
 	const [moves, setMoves] = useState([]);
 	const [undidMove, setUndidMove] = useState([]);
-    const [players, setPlayers] = playersState;
+	const [players, setPlayers] = playersState;
+	
+	useEffect(() => {
+		// get player to make a move
+		// it's players[moves.length % 2]'s turn
+
+		if (players[moves.length % 2] === 'local') {
+			return;	// player moves by pressing
+		}
+		console.log('bot move incoming')
+		const timer = Bot.bestMove(board, moves.length % 2 + 1, makeMove);
+		//const timer = setTimeout(() => makeMove(2), 2000);
+		return () => {
+			clearTimeout(timer);
+		}
+	}, [moves, undidMove]);
 	
 	const makeMove = (column) => {
 		if (gameState !== 'active') {
-			return;	// game is not in progress (paused, finished, etc.)
+			console.log(gameState);
+			return false;	// game is not in progress (paused, finished, etc.)
 		}
 		for (let i = board[column].length - 1; i >= 0; i--) {
 			if (!board[column][i]) {
@@ -79,10 +97,11 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 					checkGameState(newBoard, [column, i]);
 					return newBoard;
 				});
-				return;
+				return true;
 			}
 		}
 		// invalid move
+		return false;
 	}
 
 	const checkGameState = (newBoard, lastMove) => {
@@ -133,9 +152,10 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 
 	const resetBoard = () => {
 		setBoard([[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]]);
+		setGameState('active');
 		setMoves([]);
 		setUndidMove(undidMove => undidMove === 'all' ? 'everything' : 'all');	// a different value to trigger useEffect, which clears the board when reset
-		setGameState('active');
+		
 	}
 	
 	const undoMove = () => {
@@ -219,7 +239,7 @@ export default MatchScreen = ({toMenu, themeState, lightsState, playersState}) =
 				<Player type={players[0]} size={(gameState === 'active' && moves.length % 2 === 1) ? 48 : 64} backgroundColor={globalStyles.themes[theme].boardBackground} color={globalStyles.themes[theme].board[1]}/>
 				<Player type={players[1]} size={(gameState === 'active' && moves.length % 2 === 0) ? 48 : 64} backgroundColor={globalStyles.themes[theme].boardBackground} color={globalStyles.themes[theme].board[2]}/>
 			</View>
-			<Board board={board} makeMove={makeMove} lastMove={moves.length > 0 ? moves[moves.length - 1] : []} undidMove={undidMove} theme={theme} gameState={gameState}/>
+			<Board board={board} makeMove={makeMove} lastMove={moves.length > 0 ? moves[moves.length - 1] : []} undidMove={undidMove} theme={theme} playerCanMove={gameState === 'active' && players[moves.length % 2] === 'local'}/>
 			<View style={styles.buttonContainer}>
 				<Btn onPress={confirmUndoMove} disabled={moves.length === 0}>
 					<UndoSVG style={[styles.SVG, styles.bigButtonSVG]} fill={globalStyles.themes[theme].accent}/>
