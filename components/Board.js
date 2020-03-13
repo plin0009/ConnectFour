@@ -32,9 +32,28 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     position: 'absolute',
   },
+  winner: {
+    margin: 15,
+    width: 18,
+    height: 18,
+    borderRadius: 25,/* 
+    borderColor: '#fff',
+    borderWidth: 2, */
+    position: 'absolute',
+  }
 });
-const Board = ({board, lastMove, makeMove, theme, undidMove, playerCanMove}) => {
+const Board = ({board, lastMove, makeMove, theme, lights, undidMove, playerCanMove, winners}) => {
   const [positions] = useState(Array(7).fill().map(col => Array(6).fill().map(() => new Animated.Value(0))));
+
+  useEffect(() => {
+    for (let i = 0; i < 7; i++) {
+      for (let j = 0; j < 6; j++) {
+        if (board[i][j] !== 0) {
+          positions[i][j].setValue(1);
+        }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (lastMove.length > 0) {
@@ -76,6 +95,13 @@ const Board = ({board, lastMove, makeMove, theme, undidMove, playerCanMove}) => 
           )}
         </View>
         <BoardSVG style={styles.boardSVG} fill={globalStyles.themes[theme].boardBackground}/>
+        {winners && winners.map((winningSlot, index) => 
+          <View key={index} style={{
+            ...styles.winner,
+            transform: [{translateX: winningSlot[0] * 48 + 10}, {translateY: winningSlot[1] * 48 + 10}],
+            backgroundColor: globalStyles.themes[theme].boardBackground + '88',
+          }}/>
+        )}
         {board.map((column, columnIndex) => 
           <TouchableWithoutFeedback key={columnIndex} onPress={() => makeMove(columnIndex)} disabled={column[0] !== 0 || !playerCanMove}>
             <View style={{...styles.column, transform: [{translateX: columnIndex * 48 + 10}, {translateY: 10}]}}/>

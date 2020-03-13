@@ -6,7 +6,7 @@ export default {
 			board: [
 				'#4f4fdd',
 				'#de1616',
-				'#eecc22',
+				'#eebb22',
 			],
 		},
 		orange: {
@@ -15,7 +15,7 @@ export default {
 			board: [
 				'#cc3d00',
 				'#16ceff',
-				'#eecc00',
+				'#ee9900',
 			],
 		},
 		grayscale: {
@@ -23,20 +23,22 @@ export default {
 			accent: '#777777',
 			board: [
 				'#5b5b5b',
-				'#efefef',
-				'#121212',
+				'#bfbfbf',
+				'#050505',
 			],
 		},
 	},
 	lights: {
 		true: '#ffffff',
-		false: '#2d2d2d',
+		false: '#3c3c3c',
 	},
 	font: {
 		title: 'Spartan-Bold',
 		primary: 'Spartan-Regular',
 		secondary: 'Nunito-Regular',
 		big: 30,
+		bigger: 24,
 		medium: 20,
+		small: 16,
 	},
 }

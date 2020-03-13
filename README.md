@@ -6,8 +6,10 @@ My first stab at React Native: here's a simple app which lets you play Connect F
 
 * Experience Connect Four in the colorway of your choice (three options)
 * Choose between light mode and dark mode
-* Assign each side to either human or bot
+* Assign each side to either human or different levels of bots
 * Buttons to undo moves and clear the board
+* Wins and draws displayed clearly
+* Games are auto-saved
 
 ## Snapshots
 
@@ -39,11 +41,8 @@ My first stab at React Native: here's a simple app which lets you play Connect F
  
 ## Todo list
 
-* Make game endings friendlier!
-  * Display wins (highlight the four-in-a-row)
-  * Handle draws
-  * End screen with button to start a new game
 * Make the bot smarter & optimize
-* Different levels of bot
 * Option to bypass confirmation to undo moves and reset board
 * Going back to the menu saves the current game (+ continue game button)
+* Add timers for player moves
+* Better icons

@@ -1,28 +1,32 @@
 
 class Bot {
     constructor() {}
-	bestMove(board, turn, makeMove) {
+	async bestMove(board, difficulty, turn, makeMove) {
+        await new Promise((res) => {
+            this.timer = setTimeout(res, 1000);
+        });
         this.turn = turn;
-		const n = new Node(board, turn);
-        const thinking = this.minimax(n, 4, turn);
-        console.log(thinking);
-        if (!thinking.move) {
-            return;
-        }
-		return setTimeout(() => {
-			console.log(makeMove(thinking.move.justMoved));
-		}, 500);
+		const n = new Node(board, turn, 0, 49);
+        const thinking = this.minimax(n, difficulty);
+        if (!thinking.move) return; // no moves?
+        makeMove(thinking.move.justMoved);
     }
-    minimax(node, depth, turn) {
-        if (depth === 0 || node.value !== 0 || node.getChildren().length === 0) {
-            return {val: node.value !== 0 ? -1 : 0};
+    abort() {
+        clearTimeout(this.timer);
+    }
+    minimax(node, depth) {
+        if (depth === 0 || node.over || node.getChildren().length === 0) {
+            return {val: -node.value};
         }
         let move = null;
         let val = -Infinity;
         node.getChildren().forEach(child => {
-            let tempVal = -this.minimax(child, depth - 1, node.turn % 2 + 1).val;
+            let tempVal = -this.minimax(child, depth - 1).val;
             if (tempVal > val) {
                 val = tempVal;
+                move = child;
+            }
+            if (val === tempVal && Math.abs(3 - child.justMoved) < Math.abs(3 - move.justMoved)) {
                 move = child;
             }
         });
@@ -31,21 +35,25 @@ class Bot {
 }
 
 export class Node {
-	constructor(board, nextTurn, justMoved) {
+	constructor(board, nextTurn, justMoved, slotsLeft) {
 		this.board = board;
 		this.nextTurn = nextTurn;
         this.prevTurn = nextTurn % 2 + 1;
         this.justMoved = justMoved;
+        this.slotsLeft = slotsLeft;
+        this.over = true;
 		this.value = this.evaluate();
 		this.children = [];
 	}
 	evaluate() {
+        let highestCounter = 0;
         for (let col = 0; col < 7; col++) { // vertical matches
             let counter = 0;
             for (let row = 5; row >= 0; row--) {
                 if (this.board[col][row] === this.prevTurn) {
                     counter++;
-                    if (counter === 4) return this.prevTurn;
+                    if (counter > highestCounter)   highestCounter = counter;
+                    if (counter === 4) return this.slotsLeft;
                 }
                 else if (this.board[col][row] === 0) break;
                 else counter = 0;
@@ -57,7 +65,8 @@ export class Node {
             for (let col = 0; col < 7; col++) {
                 if (this.board[col][row] === this.prevTurn) {
                     counter++;
-                    if (counter === 4) return this.prevTurn;
+                    if (counter > highestCounter)   highestCounter = counter;
+                    if (counter === 4) return this.slotsLeft;
                 }
                 else counter = 0;
             }
@@ -72,7 +81,8 @@ export class Node {
                 if (col - 2 + row >= 7) break;
                 if (this.board[col - 2 + row][5 - row] === this.prevTurn) {
                     counter++;
-                    if (counter === 4) return this.prevTurn;
+                    if (counter > highestCounter)   highestCounter = counter;
+                    if (counter === 4) return this.slotsLeft;
                 }
                 else if (this.board[col - 2 + row][5 - row] === 0) break;
                 else counter = 0;
@@ -86,22 +96,25 @@ export class Node {
                 if (col + 2 - row >= 7) continue;
                 if (this.board[col + 2 - row][5 - row] === this.prevTurn) {
                     counter++;
-                    if (counter === 4) return this.prevTurn;
+                    if (counter > highestCounter)   highestCounter = counter;
+                    if (counter === 4) return this.slotsLeft;
                 }
                 else if (this.board[col + 2 - row][5 - row] === 0) break;
                 else counter = 0;
             }
         }
-        return 0;
+        this.over = false;
+        return highestCounter * 0.1;
     }
 	getChildren() {
+        if (this.over)   return [];
 		if (this.children.length)   return this.children;   // if children already generated, return them
         for (let col = 0; col < 7; col++) {
-            let newBoard = copyBoard(this.board)
+            let newBoard = copyBoard(this.board);
             for (let row = 5; row >= 0; row--) {
                 if (this.board[col][row] === 0) {
                     newBoard[col][row] = this.nextTurn;
-                    this.children.push(new Node(newBoard, this.prevTurn, col));
+                    this.children.push(new Node(newBoard, this.prevTurn, col, this.slotsLeft - 1));
                     break;
                 }
             }
@@ -116,6 +129,17 @@ const copyBoard = board => {
         newBoard.push([...column]);
     });
     return newBoard;
+}
+
+const compareBoards = (a,b) => {
+    for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 6; j++) {
+            if (a[i][j] !== b[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 export default Bot = new Bot();
